@@ -1,0 +1,37 @@
+{
+    "id": "0cf723f8-9caf-4808-8760-d38063ed0c02",
+    "name": "DotnetGlobalToolInstaller",
+    "friendlyName": ".NET Core Global Tool Installer",
+    "description": "Installs a .NET Core Global Tool",
+    "category": "Utility",
+    "author": "Arne Petersen",
+    "version": {
+        "Major": 0,
+        "Minor": 0,
+        "Patch": 1
+    },
+    "instanceNameFormat": ".NET Core Global Tool",
+    "inputs": [
+        {
+            "name": "name",
+            "type": "string",
+            "label": "Tool name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name of the tool."
+        },
+        {
+            "name": "versionSpec",
+            "type": "string",
+            "label": "Tool version",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "The version spec of the tool."
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "dist/task.js"
+        }
+    }
+}

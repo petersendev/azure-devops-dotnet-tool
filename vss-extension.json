@@ -1,0 +1,70 @@
+{
+    "manifestVersion": 1,
+    "id": "dotnet-global-tool-installer",
+    "name": ".NET core global tool installer",
+    "version": "0.0.1",
+    "publisher": "petersendev",
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "description": "Cross platform web smoke tests with header support, proxy support and retry option.",
+    "categories": [
+        "Build and release"
+    ],
+    "icons": {
+        "default": "images/logo.png"
+    },
+    "files": [
+        {
+            "path": "task"
+        },
+        {
+            "path": "images/screenshots",
+            "addressable": true
+        }
+    ],
+    "content": {
+        "details": {
+            "path": "README.md"
+        },
+        "license": {
+            "path": "LICENSE"
+        }
+    },
+    "links": {
+        "home": {
+            "uri": "https://github.com/petersendev/azure-devops-dotnet-tool"
+        },
+        "getstarted": {
+            "uri": "https://github.com/petersendev/azure-devops-dotnet-tool/blob/master/README.md"
+        },
+        "support": {
+            "uri": "https://github.com/petersendev/azure-devops-dotnet-tool/issues"
+        },
+        "repository": {
+            "uri": "https://github.com/petersendev/azure-devops-dotnet-tool"
+        },
+        "issues": {
+            "uri": "https://github.com/petersendev/azure-devops-dotnet-tool/issues"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/petersendev/azure-devops-dotnet-tool"
+    },
+    "contributions": [
+        {
+            "id": "AdvancedSmoke",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "task",
+                "description": "Cross platform web smoke tests with header support, proxy support and retry option."
+            }
+        }
+    ]
+}
