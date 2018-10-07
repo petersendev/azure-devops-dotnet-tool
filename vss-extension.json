@@ -56,14 +56,14 @@
     },
     "contributions": [
         {
-            "id": "AdvancedSmoke",
+            "id": "DotnetGlobalToolInstaller",
             "type": "ms.vss-distributed-task.task",
             "targets": [
                 "ms.vss-distributed-task.tasks"
             ],
             "properties": {
                 "name": "task",
-                "description": "Cross platform web smoke tests with header support, proxy support and retry option."
+                "description": ".NET Core Global Tool Installer"
             }
         }
     ]
