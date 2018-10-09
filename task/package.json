@@ -1,0 +1,62 @@
+{
+    "name": "azure-devops-dotnet-tool",
+    "version": "0.0.1",
+    "description": "Cross platform web smoke tests with header support, proxy support and retry option",
+    "main": "dist/task.js",
+    "repository": "https://github.com/petersendev/azure-devops-dotnet-tool",
+    "author": "Arne Petersen <arne@petersen.pro>",
+    "license": "MIT",
+    "scripts": {
+        "clean": "rimraf dist/* dist-testruns/*",
+        "tsc": "tsc --pretty --outDir dist",
+        "posttsc": "(cd tests/testruns && tsc --pretty)",
+        "build": "yarn run clean && yarn run tsc",
+        "test": "yarn run build && yarn run testOnly",
+        "testOnly": "jest",
+        "coverage": "jest --coverage",
+        "postcoverage": "node ./tools/process-coverage-report.js"
+    },
+    "devDependencies": {
+        "@types/execa": "^0.9.0",
+        "@types/fs-extra-promise": "^1.0.7",
+        "@types/jest": "^22.2.3",
+        "@types/node": "^10.5.1",
+        "@types/request": "^2.47.1",
+        "fs-extra-promise": "^1.0.1",
+        "jest": "^23.0.1",
+        "jest-junit": "^4.0.0",
+        "request": "^2.88.0",
+        "rimraf": "^2.6.2",
+        "ts-jest": "^22.4.6",
+        "ts-node": "^6.0.5",
+        "typescript": "^2.9.2",
+        "vsts-coverage-styles": "^1.0.7"
+    },
+    "dependencies": {
+        "delay": "^3.0.0",
+        "execa": "^1.0.0",
+        "uuid": "^3.3.2",
+        "vsts-task-lib": "^2.6.1",
+        "vsts-task-tool-lib": "^0.10.0"
+    },
+    "jest": {
+        "transform": {
+            ".(ts)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+        },
+        "testRegex": "(/tests/unit/.*|\\.(test|spec))\\.(ts|js)$",
+        "moduleFileExtensions": [
+            "ts",
+            "js"
+        ],
+        "testEnvironment": "node",
+        "testResultsProcessor": "jest-junit",
+        "coverageReporters": [
+            "text",
+            "lcov",
+            "cobertura"
+        ]
+    },
+    "jest-junit": {
+        "output": "./test-results/junit.xml"
+    }
+}
