@@ -6,3 +6,4 @@
 **/*.vsix
 **/dist-testruns
 **/tmp
+**/.taskkey

@@ -2,7 +2,7 @@ import { TaskMockRunner } from "vsts-task-lib/mock-run";
 import * as semver from "semver";
 import * as path from "path";
 import * as uuidV4 from "uuid/v4";
-import * as request from "request";
+import * as request from "request-promise";
 
 // we have to find the latest nuget package version here, so we can mock the answer :(
 const res = request("https://api-v2v3search-0.nuget.org/query?q=nbgv&prerelease=false&semVerLevel=2.0.0", { json: true }, (error, response, body) =>

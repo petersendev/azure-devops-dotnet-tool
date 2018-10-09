@@ -2,7 +2,6 @@ import { TaskMockRunner } from "vsts-task-lib/mock-run";
 import * as semver from "semver";
 import * as path from "path";
 import * as uuidV4 from "uuid/v4";
-import * as request from "request";
 
 const version = "2.2.3";
 
