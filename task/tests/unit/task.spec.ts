@@ -62,4 +62,25 @@ describe("the dotnet tool task", () =>
         expect(tr.warningIssues.length).toEqual(0);
         expect(tr.errorIssues.length).toEqual(0);
     });
+
+    it("should succeed with name and full version and tool already installed", async () =>
+    {
+        const tp = "dist-testruns/with-full-version-existant.js";
+        const tr: MockTestRunner = new MockTestRunner(tp);
+
+        tr.run();
+        if (showOutput)
+        {
+            console.log(tr.stdout, tr.stderr, tr.succeeded);
+        }
+
+        expect(tr.succeeded).toBeTruthy();
+        expect(tr.stdOutContained("acquiring nbgv@2.2.3")).toBeFalsy();
+        expect(tr.stdOutContained("Tool 'nbgv' (version '2.2.3') was successfully installed.")).toBeFalsy();
+
+        expect(tr.stderr).toBeFalsy();
+
+        expect(tr.warningIssues.length).toEqual(0);
+        expect(tr.errorIssues.length).toEqual(0);
+    });
 });
