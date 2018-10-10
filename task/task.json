@@ -2,7 +2,7 @@
     "id": "58967a6f-2cc7-4a67-ba48-6595739428c2",
     "name": "DotnetGlobalToolInstaller",
     "friendlyName": ".NET Core Global Tool Installer",
-    "description": "Installs a .NET Core Global. Uses dotnet cli internally.",
+    "description": "Installs a .NET Core Global Tool. Uses dotnet cli internally.",
     "category": "Utility",
     "author": "Arne Petersen",
     "version": {
