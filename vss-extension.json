@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "dotnet-global-tool-installer",
-    "name": ".NET core global tool installer",
+    "name": ".NET Core Global Tool Installer",
     "version": "0.0.1",
     "publisher": "petersendev",
     "targets": [
@@ -9,7 +9,7 @@
             "id": "Microsoft.VisualStudio.Services"
         }
     ],
-    "description": "Cross platform web smoke tests with header support, proxy support and retry option.",
+    "description": "Installs a .NET Core Global Tool and adds it to the agent's tool cache. Uses dotnet cli internally.",
     "categories": [
         "Build and release"
     ],

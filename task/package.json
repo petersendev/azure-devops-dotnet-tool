@@ -1,7 +1,7 @@
 {
     "name": "azure-devops-dotnet-tool",
     "version": "0.0.1",
-    "description": "Cross platform web smoke tests with header support, proxy support and retry option",
+    "description": "Installs a .NET Core Global Tool and adds it to the agent's tool cache. Uses dotnet cli internally.",
     "main": "dist/task.js",
     "repository": "https://github.com/petersendev/azure-devops-dotnet-tool",
     "author": "Arne Petersen <arne@petersen.pro>",
