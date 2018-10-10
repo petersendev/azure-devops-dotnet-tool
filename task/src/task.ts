@@ -5,6 +5,9 @@ import * as path from "path";
 import * as execa from "execa";
 import { tmpdir } from "os";
 import * as uuidV4 from "uuid/v4";
+import * as semver from "semver";
+import * as request from "request-promise";
+import { RequestPromise } from "request-promise";
 
 async function run()
 {
@@ -12,9 +15,10 @@ async function run()
     {
         const name = tl.getInput("name", true);
         const versionSpec = tl.getInput("versionSpec", false) || "";
-        const checkLatest = false;
+        const checkLatest = tl.getBoolInput("checkLatest", false);
+        const includePrerelease = tl.getBoolInput("includePrerelease", false);
 
-        await getTool(name, versionSpec, checkLatest);
+        await getTool(name, versionSpec, checkLatest, includePrerelease);
     }
     catch (error)
     {
@@ -23,7 +27,7 @@ async function run()
     }
 }
 
-async function getTool(name: string, versionSpec: string, checkLatest: boolean)
+async function getTool(name: string, versionSpec: string, checkLatest: boolean, includePrerelease: boolean)
 {
     if (versionSpec && ttl.isExplicitVersion(versionSpec))
     {
@@ -38,49 +42,54 @@ async function getTool(name: string, versionSpec: string, checkLatest: boolean)
         if (ttl.isExplicitVersion(versionSpec))
         {
             //
-            // Explicit version was specified. No need to query for list of versions.
-            //
-            version = versionSpec;
-
-            //
             // Check the cache for the resolved version.
             //
-            tl.debug(`searching cached tool: ${name}@${version}`);
-            toolPath = ttl.findLocalTool(name, version)
+            if (!checkLatest)
+            {
+                //
+                // Explicit version was specified. No need to query for list of versions.
+                //
+                version = versionSpec;
+
+                tl.debug(`searching cached tool: ${name}@${version}`);
+                toolPath = ttl.findLocalTool(name, version);
+            }
         }
         else
         {
-            tl.debug(`searching cached tool versions for ${name}`);
-            const versions = ttl.findLocalToolVersions(name);
-            if (versions)
+            if (!checkLatest)
             {
-                tl.debug(`found tool versions: ${versions.join(", ")}`);
-            }
-            else
-            {
-                tl.debug("no cached tools found");
+                tl.debug(`searching cached tool versions for ${name}`);
+                const versions = ttl.findLocalToolVersions(name);
+                if (versions && versions.length > 0)
+                {
+                    tl.debug(`found tool versions: ${versions.join(", ")}`);
+                    const sorted = semver.rsort(versions);
+                    version = <string>sorted[0];
+                    tl.debug(`searching cached tool: ${name}@${version}`);
+                    toolPath = ttl.findLocalTool(name, version);
+                }
+                else
+                {
+                    tl.debug("no cached tools found");
+                }
             }
         }
-
 
         if (!toolPath)
         {
-            //
-            // Download, extract, cache
-            //
-            toolPath = await acquireTool(name, version);
+            if (!version)
+            {
+                version = await queryLatestMatch(name, versionSpec, includePrerelease);
+                if (!version)
+                {
+                    throw new Error("could not determine version");
+                }
+            }
+
+            toolPath = ttl.findLocalTool(name, version) || await acquireTool(name, version);
         }
     }
-
-    // //
-    // // A tool installer intimately knows details about the layout of that tool
-    // // for example, node binary is in the bin folder after the extract on Mac/Linux.
-    // // layouts could change by version, by platform etc... but that's the tool installers job
-    // //
-    // if (osPlat != 'win32')
-    // {
-    //     toolPath = path.join(toolPath, 'bin');
-    // }
 
     //
     // Prepend the tools path. This prepends the PATH for the current process and
@@ -90,20 +99,35 @@ async function getTool(name: string, versionSpec: string, checkLatest: boolean)
     ttl.prependPath(toolPath);
 }
 
+async function queryLatestMatch(name: string, versionSpec: string, includePrerelease: boolean): Promise<string>
+{
+    tl.debug(`querying tool versions for ${name}${versionSpec ? `@${versionSpec}` : ""} ${includePrerelease ? "including pre-releases" : ""}`);
+
+    var res = await request(`https://api-v2v3search-0.nuget.org/query?q=${encodeURIComponent(name)}&prerelease=${includePrerelease ? "true" : "false"}&semVerLevel=2.0.0`, { json: true });
+
+    if (!res || !res.data || !res.data.length || !res.data[0].versions)
+    {
+        return null;
+    }
+
+    const versions = (<Array<{ version: string }>>res.data[0].versions).map(x => x.version);
+    if (!versions || !versions.length)
+    {
+        return null;
+    }
+
+    tl.debug(`got versions: ${versions.join(", ")}`);
+
+    return versionSpec ? ttl.evaluateVersions(versions, versionSpec) : <string>semver.rsort(versions)[0];
+}
+
 async function acquireTool(name: string, version: string): Promise<string>
 {
-    if (version)
-    {
-        tl.debug(`acquiring ${name}@${version}`);
-    }
-    else
-    {
-        tl.debug(`acquiring ${name} (no version specified)`);
-    }
+    tl.debug(`acquiring ${name}@${version}`);
 
     let tr: ToolRunner = tl.tool("dotnet");
     let tmpDir: string = getTempPath();
-    tl.debug(`installing tool to ${tmpdir}`);
+    tl.debug(`installing tool to ${tmpDir}`);
     let args = ["tool", "install", "--tool-path", tmpDir, name];
 
     if (version)
@@ -115,6 +139,13 @@ async function acquireTool(name: string, version: string): Promise<string>
     tr.arg(args);
 
     var res = tr.execSync();
+
+    tl.debug(`tool install result: ${res.code === 0 ? "success" : "failure"} ${res.error ? res.error.message : ""}`)
+
+    if (res.code)
+    {
+        throw new Error("error installing tool");
+    }
 
     var regex = /'([\d\.]+[^']*)'/;
     var match = res.stdout.match(regex);

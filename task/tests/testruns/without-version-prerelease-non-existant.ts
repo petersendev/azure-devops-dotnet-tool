@@ -5,14 +5,15 @@ import * as uuidV4 from "uuid/v4";
 import * as request from "request-promise";
 
 // we have to find the latest nuget package version here, so we can mock the answer :(
-const res = request("https://api-v2v3search-0.nuget.org/query?q=nbgv&prerelease=false&semVerLevel=2.0.0", { json: true }, (error, response, body) =>
+const res = request("https://api-v2v3search-0.nuget.org/query?q=dotnet-reportgenerator-globaltool&prerelease=true&semVerLevel=2.0.0", { json: true }, (error, response, body) =>
 {
     const projInfo = require("../package.json");
     const taskMain = path.join(__dirname, "../", projInfo.main);
     console.log("taskMain", taskMain, __dirname);
     let tmr: TaskMockRunner = new TaskMockRunner(taskMain);
 
-    tmr.setInput("name", "nbgv");
+    tmr.setInput("name", "dotnet-reportgenerator-globaltool");
+    tmr.setInput("includePrerelease", "true");
 
     process.env["AGENT_TEMPDIRECTORY"] = path.resolve("tmp");
     process.env["AGENT_TOOLSDIRECTORY"] = path.resolve("tmp/tools");
@@ -22,9 +23,9 @@ const res = request("https://api-v2v3search-0.nuget.org/query?q=nbgv&prerelease=
     console.log("RESPONSE", version);
 
 
-    const toolsPath = path.join(process.env["AGENT_TOOLSDIRECTORY"], "nbgv");
+    const toolsPath = path.join(process.env["AGENT_TOOLSDIRECTORY"], "dotnet-reportgenerator-globaltool");
     const downloadPath = path.join(process.env["AGENT_TEMPDIRECTORY"], process.env["FAKE_UUID"]);
-    const installedToolsPath = path.join(process.env["AGENT_TOOLSDIRECTORY"], "nbgv", version, "x64");
+    const installedToolsPath = path.join(process.env["AGENT_TOOLSDIRECTORY"], "dotnet-reportgenerator-globaltool", version, "x64");
     console.log("downloadPath", downloadPath, "toolsPath", toolsPath, "installedToolsPath", installedToolsPath);
 
     const mockAnswers = {

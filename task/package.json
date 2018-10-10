@@ -21,11 +21,11 @@
         "@types/fs-extra-promise": "^1.0.7",
         "@types/jest": "^22.2.3",
         "@types/node": "^10.5.1",
-        "@types/request": "^2.47.1",
+        "@types/request-promise": "^4.1.42",
+        "@types/semver": "^5.5.0",
         "fs-extra-promise": "^1.0.1",
         "jest": "^23.0.1",
         "jest-junit": "^4.0.0",
-        "request": "^2.88.0",
         "rimraf": "^2.6.2",
         "ts-jest": "^22.4.6",
         "ts-node": "^6.0.5",
@@ -35,6 +35,8 @@
     "dependencies": {
         "delay": "^3.0.0",
         "execa": "^1.0.0",
+        "request-promise": "^4.2.2",
+        "semver": "^5.5.1",
         "uuid": "^3.3.2",
         "vsts-task-lib": "^2.6.1",
         "vsts-task-tool-lib": "^0.10.0"
