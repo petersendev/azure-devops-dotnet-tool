@@ -80,7 +80,11 @@ async function getTool(name: string, versionSpec: string, checkLatest: boolean, 
         {
             if (!version)
             {
-                version = await queryLatestMatch(versionSpec, includePrerelease);
+                version = await queryLatestMatch(name, versionSpec, includePrerelease);
+                if (!version)
+                {
+                    throw new Error("could not determine version");
+                }
             }
 
             toolPath = ttl.findLocalTool(name, version) || await acquireTool(name, version);
@@ -95,11 +99,11 @@ async function getTool(name: string, versionSpec: string, checkLatest: boolean, 
     ttl.prependPath(toolPath);
 }
 
-async function queryLatestMatch(versionSpec: string, includePrerelease: boolean): Promise<string>
+async function queryLatestMatch(name: string, versionSpec: string, includePrerelease: boolean): Promise<string>
 {
-    tl.debug(`querying tool versions for ${versionSpec} ${includePrerelease ? "including pre-releases" : ""}`);
+    tl.debug(`querying tool versions for ${name}${versionSpec ? `@${versionSpec}` : ""} ${includePrerelease ? "including pre-releases" : ""}`);
 
-    var res = await request(`https://api-v2v3search-0.nuget.org/query?q=nbgv&prerelease=${includePrerelease ? "true" : "false"}&semVerLevel=2.0.0`, { json: true });
+    var res = await request(`https://api-v2v3search-0.nuget.org/query?q=${encodeURIComponent(name)}&prerelease=${includePrerelease ? "true" : "false"}&semVerLevel=2.0.0`, { json: true });
 
     if (!res || !res.data || !res.data.length || !res.data[0].versions)
     {
@@ -107,8 +111,14 @@ async function queryLatestMatch(versionSpec: string, includePrerelease: boolean)
     }
 
     const versions = (<Array<{ version: string }>>res.data[0].versions).map(x => x.version);
+    if (!versions || !versions.length)
+    {
+        return null;
+    }
+
     tl.debug(`got versions: ${versions.join(", ")}`);
-    return ttl.evaluateVersions(versions, versionSpec);
+
+    return versionSpec ? ttl.evaluateVersions(versions, versionSpec) : <string>semver.rsort(versions)[0];
 }
 
 async function acquireTool(name: string, version: string): Promise<string>
@@ -117,7 +127,7 @@ async function acquireTool(name: string, version: string): Promise<string>
 
     let tr: ToolRunner = tl.tool("dotnet");
     let tmpDir: string = getTempPath();
-    tl.debug(`installing tool to ${tmpdir}`);
+    tl.debug(`installing tool to ${tmpDir}`);
     let args = ["tool", "install", "--tool-path", tmpDir, name];
 
     if (version)
@@ -129,6 +139,13 @@ async function acquireTool(name: string, version: string): Promise<string>
     tr.arg(args);
 
     var res = tr.execSync();
+
+    tl.debug(`tool install result: ${res.code === 0 ? "success" : "failure"} ${res.error ? res.error.message : ""}`)
+
+    if (res.code)
+    {
+        throw new Error("error installing tool");
+    }
 
     var regex = /'([\d\.]+[^']*)'/;
     var match = res.stdout.match(regex);

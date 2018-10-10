@@ -42,6 +42,29 @@ describe("the dotnet tool task", () =>
 
     });
 
+    it("should succeed with only the tool name set and no tool already installed for a pre-release version", async () =>
+    {
+        const tp = "dist-testruns/without-version-prerelease-non-existant.js";
+        const tr: MockTestRunner = new MockTestRunner(tp);
+
+
+        tr.run();
+        if (showOutput)
+        {
+            console.log(tr.stdout, tr.stderr, tr.succeeded);
+        }
+
+        expect(tr.succeeded).toBeTruthy();
+        expect(tr.stdOutContained("acquiring dotnet-reportgenerator-globaltool@")).toBeTruthy();
+        expect(tr.stdOutContained("was successfully installed.")).toBeTruthy();
+
+        expect(tr.stderr).toBeFalsy();
+
+        expect(tr.warningIssues.length).toEqual(0);
+        expect(tr.errorIssues.length).toEqual(0);
+
+    });
+
     it("should succeed with name and full version and no tool already installed", async () =>
     {
         const tp = "dist-testruns/with-full-version-non-existant.js";
