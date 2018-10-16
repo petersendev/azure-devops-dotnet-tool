@@ -34,7 +34,7 @@ describe("the dotnet tool task", () =>
         expect(tr.succeeded).toBeTruthy();
         expect(tr.stdOutContained("acquiring nbgv@")).toBeTruthy();
         expect(tr.stdOutContained("was successfully installed.")).toBeTruthy();
-
+        expect(tr.stdOutContained("detected installed version")).toBeTruthy();
         expect(tr.stderr).toBeFalsy();
 
         expect(tr.warningIssues.length).toEqual(0);
@@ -57,6 +57,7 @@ describe("the dotnet tool task", () =>
         expect(tr.succeeded).toBeTruthy();
         expect(tr.stdOutContained("acquiring dotnet-reportgenerator-globaltool@")).toBeTruthy();
         expect(tr.stdOutContained("was successfully installed.")).toBeTruthy();
+        expect(tr.stdOutContained("detected installed version")).toBeTruthy();
 
         expect(tr.stderr).toBeFalsy();
 
@@ -79,6 +80,7 @@ describe("the dotnet tool task", () =>
         expect(tr.succeeded).toBeTruthy();
         expect(tr.stdOutContained("acquiring nbgv@2.2.3")).toBeTruthy();
         expect(tr.stdOutContained("Tool 'nbgv' (version '2.2.3') was successfully installed.")).toBeTruthy();
+        expect(tr.stdOutContained("detected installed version 2.2.3")).toBeTruthy();
 
         expect(tr.stderr).toBeFalsy();
 
@@ -100,6 +102,7 @@ describe("the dotnet tool task", () =>
         expect(tr.succeeded).toBeTruthy();
         expect(tr.stdOutContained("acquiring nbgv@2.2.3")).toBeFalsy();
         expect(tr.stdOutContained("Tool 'nbgv' (version '2.2.3') was successfully installed.")).toBeFalsy();
+        expect(tr.stdOutContained("detected installed version")).toBeFalsy();
 
         expect(tr.stderr).toBeFalsy();
 
@@ -121,6 +124,7 @@ describe("the dotnet tool task", () =>
         expect(tr.succeeded).toBeTruthy();
         expect(tr.stdOutContained("acquiring nbgv@2.1.84")).toBeTruthy();
         expect(tr.stdOutContained("Tool 'nbgv' (version '2.1.84') was successfully installed.")).toBeTruthy();
+        expect(tr.stdOutContained("detected installed version 2.1.84")).toBeTruthy();
 
         expect(tr.stderr).toBeFalsy();
 
