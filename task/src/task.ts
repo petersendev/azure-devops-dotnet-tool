@@ -147,7 +147,7 @@ async function acquireTool(name: string, version: string): Promise<string>
         throw new Error("error installing tool");
     }
 
-    var regex = /'([\d\.]+[^']*)'/;
+    var regex = new RegExp(`^Tool '${name}' \\(version '([\\d\\.]+[^']*)'\\) was successfully installed\\.$`, "m");
     var match = res.stdout.match(regex);
     if (match)
     {
@@ -155,10 +155,9 @@ async function acquireTool(name: string, version: string): Promise<string>
         tl.debug(`detected installed version ${version}`);
     }
 
-    if (!version)
+    if (!match || !version)
     {
-        tl.setResult(tl.TaskResult.Failed, "could not detect installed version");
-        return;
+        throw new Error("could not detect installed version");
     }
 
     return await ttl.cacheDir(tmpDir, name, version);
