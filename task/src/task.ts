@@ -150,7 +150,7 @@ async function acquireTool(name: string, version: string): Promise<string>
         throw new Error("error installing tool");
     }
 
-    var regex = new RegExp(`^Tool '${name}' \\(version '([\\d\\.]+[^']*)'\\) was successfully installed\\.$`, "m");
+    var regex = new RegExp(`^Tool '${name}' \\(version '([\\d\\.]+[^']*)'\\) was successfully installed\\.$`, "mi");
     var match = res.stdout.match(regex);
     if (match)
     {
