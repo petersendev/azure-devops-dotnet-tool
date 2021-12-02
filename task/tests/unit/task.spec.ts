@@ -1,8 +1,8 @@
-import { MockTestRunner } from "vsts-task-lib/mock-test";
+import { MockTestRunner } from "azure-pipelines-task-lib/mock-test";
 
 import * as path from "path";
 import * as fs from "fs-extra-promise";
-import * as delay from "delay";
+import delay from "delay";
 
 const showOutput = process.env.SYSTEM_DEBUG === "true";
 console.log("showOutput", showOutput ? "true" : "false");
@@ -49,7 +49,7 @@ describe("the dotnet tool task", () =>
 
 
         tr.run();
-        if (showOutput)
+        if (!showOutput)
         {
             console.log(tr.stdout, tr.stderr, tr.succeeded);
         }

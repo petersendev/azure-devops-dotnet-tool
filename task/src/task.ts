@@ -1,6 +1,6 @@
-import * as tl from "vsts-task-lib";
-import * as ttl from "vsts-task-tool-lib"
-import { ToolRunner } from 'vsts-task-lib/toolrunner';
+import * as tl from "azure-pipelines-task-lib";
+import * as ttl from "azure-pipelines-tool-lib";
+import { ToolRunner } from 'azure-pipelines-task-lib/toolrunner';
 import * as path from "path";
 import * as execa from "execa";
 import { tmpdir } from "os";
@@ -110,13 +110,16 @@ async function queryLatestMatch(name: string, versionSpec: string, includePrerel
         return null;
     }
 
-    const versions = (<Array<{ version: string }>>res.data[0].versions).map(x => x.version);
+    let versions = (<Array<{ version: string }>>res.data[0].versions).map(x => x.version);
     if (!versions || !versions.length)
     {
         return null;
     }
 
-    tl.debug(`got versions: ${versions.join(", ")}`);
+    // sanitize versions
+    versions = versions.filter(x => semver.valid(x));
+
+    tl.debug(`got versions (sanitized): ${versions.join(", ")}`);
 
     return versionSpec ? ttl.evaluateVersions(versions, versionSpec) : <string>semver.rsort(versions)[0];
 }
