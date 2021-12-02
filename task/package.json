@@ -12,8 +12,8 @@
         "posttsc": "(cd tests/testruns && tsc --pretty)",
         "build": "yarn run clean && yarn run tsc",
         "test": "yarn run build && yarn run testOnly",
-        "testOnly": "jest",
-        "coverage": "jest --coverage",
+        "testOnly": "jest --watchAll=false",
+        "coverage": "jest --watchAll=false --coverage",
         "postcoverage": "node ./tools/process-coverage-report.js"
     },
     "devDependencies": {
