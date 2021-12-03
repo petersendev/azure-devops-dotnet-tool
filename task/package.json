@@ -12,39 +12,39 @@
         "posttsc": "(cd tests/testruns && tsc --pretty)",
         "build": "yarn run clean && yarn run tsc",
         "test": "yarn run build && yarn run testOnly",
-        "testOnly": "jest",
-        "coverage": "jest --coverage",
+        "testOnly": "jest --watchAll=false",
+        "coverage": "jest --watchAll=false --coverage",
         "postcoverage": "node ./tools/process-coverage-report.js"
     },
     "devDependencies": {
         "@types/execa": "^0.9.0",
         "@types/fs-extra-promise": "^1.0.7",
         "@types/jest": "^22.2.3",
-        "@types/node": "^10.5.1",
+        "@types/node": "^10.17.0",
         "@types/request-promise": "^4.1.42",
         "@types/semver": "^5.5.0",
         "fs-extra-promise": "^1.0.1",
-        "jest": "^23.0.1",
-        "jest-junit": "^4.0.0",
+        "jest": "^27.4.3",
+        "jest-junit": "^13.0.0",
         "rimraf": "^2.6.2",
-        "ts-jest": "^22.4.6",
-        "ts-node": "^6.0.5",
-        "typescript": "^2.9.2",
+        "ts-jest": "^27.0.7",
+        "ts-node": "^10.4.0",
+        "typescript": "^4.0.0",
         "vsts-coverage-styles": "^1.0.7"
     },
     "dependencies": {
+        "azure-pipelines-task-lib": "^3.1.10",
+        "azure-pipelines-tool-lib": "^0.13.3",
         "delay": "^3.0.0",
         "execa": "^1.0.0",
         "request": "^2.87.0",
         "request-promise": "^4.2.2",
         "semver": "^5.5.1",
-        "uuid": "^3.3.2",
-        "vsts-task-lib": "^2.6.1",
-        "vsts-task-tool-lib": "^0.10.0"
+        "uuid": "^3.3.2"
     },
     "jest": {
         "transform": {
-            ".(ts)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+            ".(ts)": "ts-jest"
         },
         "testRegex": "(/tests/unit/.*|\\.(test|spec))\\.(ts|js)$",
         "moduleFileExtensions": [

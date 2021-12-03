@@ -1,8 +1,8 @@
-import { MockTestRunner } from "vsts-task-lib/mock-test";
+import { MockTestRunner } from "azure-pipelines-task-lib/mock-test";
 
 import * as path from "path";
 import * as fs from "fs-extra-promise";
-import * as delay from "delay";
+import delay from "delay";
 
 const showOutput = process.env.SYSTEM_DEBUG === "true";
 console.log("showOutput", showOutput ? "true" : "false");
@@ -56,6 +56,30 @@ describe("the dotnet tool task", () =>
 
         expect(tr.succeeded).toBeTruthy();
         expect(tr.stdOutContained("acquiring dotnet-reportgenerator-globaltool@")).toBeTruthy();
+        expect(tr.stdOutContained("was successfully installed.")).toBeTruthy();
+        expect(tr.stdOutContained("detected installed version")).toBeTruthy();
+
+        expect(tr.stderr).toBeFalsy();
+
+        expect(tr.warningIssues.length).toEqual(0);
+        expect(tr.errorIssues.length).toEqual(0);
+
+    });
+
+    it("should succeed with full version and no tool already installed for a pre-release version and ignore casing", async () =>
+    {
+        const tp = "dist-testruns/with-full-version-non-existant-prerelease-casing.js";
+        const tr: MockTestRunner = new MockTestRunner(tp);
+
+
+        tr.run();
+        if (showOutput)
+        {
+            console.log(tr.stdout, tr.stderr, tr.succeeded);
+        }
+
+        expect(tr.succeeded).toBeTruthy();
+        expect(tr.stdOutContained("acquiring GitVersion.Tool@")).toBeTruthy();
         expect(tr.stdOutContained("was successfully installed.")).toBeTruthy();
         expect(tr.stdOutContained("detected installed version")).toBeTruthy();
 

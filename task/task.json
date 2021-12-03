@@ -46,7 +46,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "dist/task.js"
         }
     }
