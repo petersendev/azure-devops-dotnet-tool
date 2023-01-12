@@ -13,12 +13,13 @@ async function run()
 {
     try
     {
+        const networkProxy = tl.getHttpProxyConfiguration();
         const name = tl.getInput("name", true);
         const versionSpec = tl.getInput("versionSpec", false) || "";
         const checkLatest = tl.getBoolInput("checkLatest", false);
         const includePrerelease = tl.getBoolInput("includePrerelease", false);
 
-        await getTool(name, versionSpec, checkLatest, includePrerelease);
+        await getTool(name, versionSpec, checkLatest, includePrerelease, networkProxy);
     }
     catch (error)
     {
@@ -27,7 +28,7 @@ async function run()
     }
 }
 
-async function getTool(name: string, versionSpec: string, checkLatest: boolean, includePrerelease: boolean)
+async function getTool(name: string, versionSpec: string, checkLatest: boolean, includePrerelease: boolean, networkProxy: tl.ProxyConfiguration)
 {
     if (versionSpec && ttl.isExplicitVersion(versionSpec))
     {
@@ -80,7 +81,7 @@ async function getTool(name: string, versionSpec: string, checkLatest: boolean, 
         {
             if (!version)
             {
-                version = await queryLatestMatch(name, versionSpec, includePrerelease);
+                version = await queryLatestMatch(name, versionSpec, includePrerelease, networkProxy);
                 if (!version)
                 {
                     throw new Error("could not determine version");
@@ -99,12 +100,11 @@ async function getTool(name: string, versionSpec: string, checkLatest: boolean, 
     ttl.prependPath(toolPath);
 }
 
-async function queryLatestMatch(name: string, versionSpec: string, includePrerelease: boolean): Promise<string>
+async function queryLatestMatch(name: string, versionSpec: string, includePrerelease: boolean, networkProxy: tl.ProxyConfiguration): Promise<string>
 {
     tl.debug(`querying tool versions for ${name}${versionSpec ? `@${versionSpec}` : ""} ${includePrerelease ? "including pre-releases" : ""}`);
 
-    var res = await request(`https://api-v2v3search-0.nuget.org/query?q=${encodeURIComponent(name)}&prerelease=${includePrerelease ? "true" : "false"}&semVerLevel=2.0.0`, { json: true });
-
+    var res = await request(`https://api-v2v3search-0.nuget.org/query?q=${encodeURIComponent(name)}&prerelease=${includePrerelease ? "true" : "false"}&semVerLevel=2.0.0`, { json: true, proxy: networkProxy.proxyUrl });
     if (!res || !res.data || !res.data.length || !res.data[0].versions)
     {
         return null;
